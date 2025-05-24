@@ -10,4 +10,8 @@ def demo2(request):
     return HttpResponse("Demo Page 2")
 def nothing(request):
     return HttpResponse("Nothing")
+def yash(request):
+    return HttpResponse("yashwanth page")
+def navya(request):
+    return HttpResponse("Hello Navya")
 

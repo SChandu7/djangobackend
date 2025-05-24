@@ -1,0 +1,20 @@
+<!-- templates/create_todo.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Todo</title>
+</head>
+<body>
+    <h1>Create a New Todo</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="id">Todo ID:</label><br>
+        <input type="text" id="userid" name="userid" required><br><br>
+
+        <label for="title">Todo Title:</label><br>
+        <input type="text" id="userdata" name="userdata" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
