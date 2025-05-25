@@ -26,14 +26,17 @@ def send(request):
     if request.method == 'POST':
         userid = request.POST.get('userid')
         userdata = request.POST.get('userdata')
+        days = request.POST.get('days')
+        assignments = request.POST.get('assignments')
+
         print("Received userid:", userid)
-        print("Received userdata:", userdata)
+        print("Received userdata:", userdata)   
 
 
-        if not userid or not userdata:
+        if not userid or not userdata or not days or not assignments:
             return JsonResponse({'status': 'error', 'message': 'Missing data'}, status=400)
 
-        todouser.objects.create(userid=userid, userdata=userdata)
+        todouser.objects.create(userid=userid, userdata=userdata,days=days, assignments=assignments)
         return JsonResponse({'status': 'success', 'message': 'Task saved successfully'})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
