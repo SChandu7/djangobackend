@@ -7,6 +7,11 @@ from .models import MyUser,todouser
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .serializers import UserDataSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
 
 @csrf_exempt
 def signup_view(request):
@@ -40,6 +45,11 @@ def send(request):
         return JsonResponse({'status': 'success', 'message': 'Task saved successfully'})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+@api_view(['GET'])
+def get_user_data(request):
+    data = todouser.objects.all()
+    serializer = UserDataSerializer(data, many=True)
+    return Response(serializer.data)
 
 @csrf_exempt
 def login_view(request):
