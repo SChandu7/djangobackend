@@ -14,5 +14,13 @@ class todouser(models.Model):
 
     def __str__(self):
         return self.userid
+class daysandassignments(models.Model):
+    days = models.CharField(max_length=100)
+    assignments = models.CharField(max_length=100)
+    description = models.CharField(max_length=100,default='')
+    
+
+    def __str__(self):
+        return self.userid
 
 

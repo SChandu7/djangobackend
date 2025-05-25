@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home,demo,demo2,nothing,yash,navya
-from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data
+from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data,get_assignments,get_display
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home),
@@ -30,6 +30,13 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('send/', send, name='send'),
     path('navya/', navya, name='navya'),
-    path('receive', get_user_data, name='get_user_data'),
+    path('receive/', get_user_data, name='get_user_data'),
+    path('rec/', get_user_data, name='get_user_data'),
+
+    path('assignments/', get_assignments, name='get_assignments'),
+    path('display/', get_display, name='get_display'),
+
+
+
 
 ]

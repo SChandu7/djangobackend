@@ -3,11 +3,11 @@ from django.http import HttpResponse
 
 
 from django.shortcuts import render, redirect
-from .models import MyUser,todouser
+from .models import MyUser,todouser,daysandassignments
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .serializers import UserDataSerializer
+from .serializers import UserDataSerializer,DisplayDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -51,6 +51,12 @@ def get_user_data(request):
     serializer = UserDataSerializer(data, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_display(request):
+    data = daysandassignments.objects.all()
+    serializer = DisplayDataSerializer(data, many=True)
+    return Response(serializer.data)
+
 @csrf_exempt
 def login_view(request):
     if request.method == 'POST':
@@ -66,8 +72,33 @@ def login_view(request):
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+@csrf_exempt
+def get_assignments(request):
+    if request.method == 'POST':
+        days = request.POST.get('days')
+        assignments = request.POST.get('assignments')
+        description = request.POST.get('description')
+        
+
+        print("Received days:", days)
+        print("Received assignments:", assignments)   
+        print("Received decsription:", description)   
+
+
+
+        if not days or not assignments or not description :
+            return JsonResponse({'status': 'error', 'message': 'Missing data'}, status=400)
+
+        daysandassignments.objects.create(days=days, assignments=assignments,description=description)
+        return JsonResponse({'status': 'success', 'message': 'Task saved successfully'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
 def home2(request):
     return HttpResponse("Hello World 2")
+
+
+
 
 
 
