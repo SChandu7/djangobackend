@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from datetime import datetime
 
 
 from django.shortcuts import render, redirect
-from .models import MyUser,todouser,daysandassignments
+from .models import MyUser,todouser,daysandassignments,arduinodata
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .serializers import UserDataSerializer,DisplayDataSerializer
+from .serializers import UserDataSerializer,DisplayDataSerializer,ArduinoDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -45,6 +46,30 @@ def send(request):
         return JsonResponse({'status': 'success', 'message': 'Task saved successfully'})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def send_arduino(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            result = data.get('result')
+            time2 = data.get('time')
+            time = datetime.now().strftime("%Y-%m-%d %I:%M %p")
+
+            print("✅ Received in Django:", result, time)
+            
+            
+            arduinodata.objects.create(result=result, time=time)
+            return JsonResponse({'status': 'success', 'result': result, 'time': time})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    return JsonResponse({'error': 'Only POST allowed'}, status=405)
+
+
 @api_view(['GET'])
 def get_user_data(request):
     data = todouser.objects.all()
@@ -56,6 +81,14 @@ def get_display(request):
     data = daysandassignments.objects.all()
     serializer = DisplayDataSerializer(data, many=True)
     return Response(serializer.data)
+@api_view(['GET'])
+def receive_arduino(request):
+    
+    data = arduinodata.objects.all()
+    serializer = ArduinoDataSerializer(data, many=True)
+    return Response(serializer.data)
+    
+
 
 @csrf_exempt
 def login_view(request):

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home,demo,demo2,nothing,yash,navya
-from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data,get_assignments,get_display
+from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data,get_assignments,get_display,send_arduino, receive_arduino
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home),
@@ -35,6 +35,9 @@ urlpatterns = [
 
     path('assignments/', get_assignments, name='get_assignments'),
     path('display/', get_display, name='get_display'),
+
+    path('arduinosend/', send_arduino, name='send_arduino'),
+     path('receive_arduino/', receive_arduino),
 
 
 

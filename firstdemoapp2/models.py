@@ -4,6 +4,7 @@ class MyUser(models.Model):
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
 
+
     def __str__(self):
         return self.username
 class todouser(models.Model):
@@ -22,5 +23,9 @@ class daysandassignments(models.Model):
 
     def __str__(self):
         return self.userid
+    
+class arduinodata(models.Model):
+    time = models.DateTimeField(auto_now_add=True)
+    result = models.CharField(max_length=100)
 
 
