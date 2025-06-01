@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home,demo,demo2,nothing,yash,navya
-from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data,get_assignments,get_display,send_arduino, receive_arduino
+from firstdemoapp2.views import signup_view, login_view, home2,send,get_user_data,get_assignments,get_display,send_arduino, receive_arduino,upload_file_to_s3,receive_files_from_s3#,dbn_deliver_order_placed
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home),
-     path('home/', home2),
+        path('home/', home2),
     path('demo/', demo),
     path('yash/', yash),
     path('demo/demo/', demo2),
@@ -37,7 +37,14 @@ urlpatterns = [
     path('display/', get_display, name='get_display'),
 
     path('arduinosend/', send_arduino, name='send_arduino'),
-     path('receive_arduino/', receive_arduino),
+    path('receive_arduino/', receive_arduino),
+
+    path('uploadfiletos3/', upload_file_to_s3.as_view(), name='file-upload'),
+    path('receivefilesfroms3/', receive_files_from_s3.as_view()),
+
+      #  path('dbndeliverorderplace/', dbn_deliver_order_placed, name='dbn_deliver_order_place'),
+
+
 
 
 

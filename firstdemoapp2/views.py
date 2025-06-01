@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime
-
-
+from django.conf import settings
+import boto3
 from django.shortcuts import render, redirect
 from .models import MyUser,todouser,daysandassignments,arduinodata
 from django.contrib import messages
@@ -11,7 +11,11 @@ from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserDataSerializer,DisplayDataSerializer,ArduinoDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+import boto3
+from django.conf import settings
 
 
 @csrf_exempt
@@ -126,6 +130,45 @@ def get_assignments(request):
         return JsonResponse({'status': 'success', 'message': 'Task saved successfully'})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+class upload_file_to_s3(APIView):
+    def post(self, request, format=None):
+        file_obj = request.FILES.get('file')
+
+        if not file_obj:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        s3 = boto3.client(
+            's3',
+            region_name='ap-south-1',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        s3.upload_fileobj(file_obj, settings.AWS_STORAGE_BUCKET_NAME, file_obj.name)
+
+        file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-south-1.amazonaws.com/{file_obj.name}"
+        return Response({"url": file_url}, status=status.HTTP_200_OK)
+    
+class receive_files_from_s3(APIView):
+    def get(self, request):
+        s3 = boto3.client(
+            's3',
+            region_name='ap-south-1',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        try:
+            response = s3.list_objects_v2(Bucket=settings.AWS_STORAGE_BUCKET_NAME)
+            files = []
+            for item in response.get('Contents', []):
+                files.append(f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{s3.meta.region_name}.amazonaws.com/{item['Key']}")
+
+            return Response({"files": files})
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def home2(request):
     return HttpResponse("Hello World 2")

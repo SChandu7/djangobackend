@@ -9,8 +9,8 @@ class MyUser(models.Model):
         return self.username
 class todouser(models.Model):
     userid = models.CharField(max_length=100)
-    userdata = models.CharField(max_length=100)
-    days = models.CharField(max_length=100,default='')
+    userdata = models.CharField(max_length=5000)
+    days = models.CharField(max_length=1000,default='')
     assignments = models.CharField(max_length=100,default='')
 
     def __str__(self):
