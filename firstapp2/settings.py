@@ -100,10 +100,10 @@ WSGI_APPLICATION = 'firstapp2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djangodb',
-        'USER': 'adminn',
-        'PASSWORD': 'King_chandu_s143',
-        'HOST': 'djangodb.cji6cw08sj9q.ap-northeast-1.rds.amazonaws.com',
+        'NAME': 'awsdb',
+        'USER': 'kingchandus',
+        'PASSWORD': 'kingchandus',
+        'HOST': 'awsdb.cb802oouacac.ap-south-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -141,6 +141,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+#AKIA4GN2VILB5ZAR6TEY
+#AkOAn9N9GJHS6M75TM28/XaPe6S6jiRvE0zNCSyF
+
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = 'AKIA4GN2VILB5ZAR6TEY'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'djangotestcase'
+AWS_S3_REGION_NAME = 'ap-south-1'
 
 
 # Internationalization
