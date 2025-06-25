@@ -4,12 +4,12 @@ from datetime import datetime
 from django.conf import settings
 import boto3
 from django.shortcuts import render, redirect
-from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages
+from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer
+from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -501,4 +501,30 @@ class getSportsDailyActivityView(APIView):
         activities = SportsDailyActivity.objects.all().order_by('-date')
         serializer = SportsDailyActivitySerializer(activities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class postSportsNotificationTokenView(APIView):
+    def post(self, request):
+        serializer = SportsNotificationTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            token = serializer.validated_data['device_token']
+
+            # Optional: update if user already has a token
+            obj, created = SportsNotificationToken.objects.update_or_create(
+                username=username,
+                defaults={'device_token': token}
+            )
+
+            return Response({'message': 'Token saved'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class getSportsNotificationTokenView(APIView):
+    def get(self, request):
+        tokens = SportsNotificationToken.objects.values_list('device_token', flat=True)
+        return Response({'tokens': list(tokens)})
+
+
 
