@@ -1,23 +1,8 @@
-"""
-URL configuration for firstapp2 project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from .views import home, demo, demo2, nothing, yash, navya
-from firstdemoapp2.views import signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login
+from firstdemoapp2.views import signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login,postSportsDailyActivityView,getSportsDailyActivityView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -51,4 +36,6 @@ urlpatterns = [
     path('dbngetorder/', dbn_get_order, name='dbn_get_order'),
     path('kisanregister/', kisan_register, name='kisan_register'),
     path('kisanlogin/', kisan_login, name='kisan_login'),
+    path('postsportsdailyactivity', postSportsDailyActivityView.as_view(), name='postsportsdailyactivity'),
+    path('getsportsdailyactivity', getSportsDailyActivityView.as_view(), name='getsportsdailyactivity'),
 ]
