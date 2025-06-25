@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path
 from .views import home, demo, demo2, nothing, yash, navya
-from firstdemoapp2.views import signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login,postSportsDailyActivityView,getSportsDailyActivityView,SportsNotificationTokenView
+from firstdemoapp2.views import signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login,postSportsDailyActivityView,getSportsDailyActivityView,postSportsNotificationTokenView,getSportsNotificationTokenView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,4 +39,6 @@ urlpatterns = [
     path('postsportsdailyactivity', postSportsDailyActivityView.as_view(), name='postsportsdailyactivity'),
     path('getsportsdailyactivity', getSportsDailyActivityView.as_view(), name='getsportsdailyactivity'),
     path('postsportsnotificationtoken/', SportsNotificationTokenView.as_view(), name='postsportsnotificationtoken'),
+    path('postsportsnotificationtoken/', getSportsNotificationTokenView.as_view(), name='postsportsnotificationtoken'),
+
 ]
