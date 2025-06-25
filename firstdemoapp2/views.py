@@ -18,6 +18,8 @@ from rest_framework import status
 import boto3
 from django.conf import settings
 from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
+from firebase_admin import messaging
+
 
 
 @csrf_exempt
@@ -525,6 +527,31 @@ class getSportsNotificationTokenView(APIView):
     def get(self, request):
         tokens = SportsNotificationToken.objects.values_list('device_token', flat=True)
         return Response({'tokens': list(tokens)})
+class SendSportsActivityNotificationToAll(APIView):
+    def post(self, request):
+        title = request.data.get("title")
+        body = request.data.get("body")
+
+        tokens = list(SportsNotificationToken.objects.values_list("device_token", flat=True))
+
+        if not tokens:
+            return Response({"message": "No tokens to send."}, status=200)
+
+        message = messaging.MulticastMessage(
+            notification=messaging.Notification(
+                title=title,
+                body=body,
+            ),
+            tokens=tokens,
+        )
+
+        response = messaging.send_multicast(message)
+
+        return Response({
+            "sent": response.success_count,
+            "failed": response.failure_count,
+        }, status=200)
+
 
 
 
