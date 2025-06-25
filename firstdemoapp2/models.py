@@ -84,3 +84,21 @@ class kisandata(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.user_type})"
+
+
+    
+class SportsDailyActivity(models.Model):
+    pt_name = models.CharField(max_length=100)
+    activity_type = models.CharField(max_length=100)
+    game_name = models.CharField(max_length=100)
+    date = models.CharField(max_length=20)
+    time = models.CharField(max_length=50)
+    school = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class SportsDailyActivityImages(models.Model):
+    activity = models.ForeignKey(SportsDailyActivity, related_name='images', on_delete=models.CASCADE)
+    image_url = models.URLField()
+
+
+
