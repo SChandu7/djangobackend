@@ -4,12 +4,12 @@ from datetime import datetime
 from django.conf import settings
 import boto3
 from django.shortcuts import render, redirect
-from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem
+from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer
+from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -463,3 +463,42 @@ def kisan_login(request):
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+class postSportsDailyActivityView(APIView):
+    def post(self, request, format=None):
+        # Create the Activity
+        serializer = SportsDailyActivitySerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        activity = serializer.save()
+
+        # Upload images to AWS S3
+        s3 = boto3.client('s3',
+                          region_name='ap-south-1',
+                          aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+
+        folder_name = "sportsactivityimages"
+
+        for key in request.FILES:
+            file_obj = request.FILES[key]
+            filename = f"{folder_name}/{activity.activity_type}_{file_obj.name}"  # save to subfolder
+            s3.upload_fileobj(file_obj, settings.AWS_STORAGE_BUCKET_NAME, filename)
+
+            file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-south-1.amazonaws.com/{filename}"
+
+            SportsDailyActivityImages.objects.create(activity=activity, image_url=file_url)
+
+        return Response(SportsDailyActivitySerializer(activity).data, status=status.HTTP_201_CREATED)
+
+
+
+
+class getSportsDailyActivityView(APIView):
+    def get(self, request, format=None):
+        activities = SportsDailyActivity.objects.all().order_by('-date')
+        serializer = SportsDailyActivitySerializer(activities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
