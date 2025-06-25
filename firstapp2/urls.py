@@ -38,7 +38,7 @@ urlpatterns = [
     path('kisanlogin/', kisan_login, name='kisan_login'),
     path('postsportsdailyactivity', postSportsDailyActivityView.as_view(), name='postsportsdailyactivity'),
     path('getsportsdailyactivity', getSportsDailyActivityView.as_view(), name='getsportsdailyactivity'),
-    path('postsportsnotificationtoken/', SportsNotificationTokenView.as_view(), name='postsportsnotificationtoken'),
-    path('postsportsnotificationtoken/', getSportsNotificationTokenView.as_view(), name='postsportsnotificationtoken'),
+    path('postsportsnotificationtoken/', postSportsNotificationTokenView.as_view(), name='postsportsnotificationtoken'),
+    path('getsportsnotificationtoken/', getSportsNotificationTokenView.as_view(), name='getsportsnotificationtoken'),
 
 ]
