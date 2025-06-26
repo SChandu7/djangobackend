@@ -26,8 +26,10 @@ from firebase_admin import messaging
 
 
 
-cred = credentials.Certificate(os.path.join('/home/ubuntu/djangobackend/firstapp2/sportsforchangeproject-firebase-adminsdk-8u6av-886cee7b42.json'))
-firebase_admin.initialize_app(cred)
+
+cred_path = os.path.join('/home/ubuntu/djangobackend/firstapp2/sportsforchangeproject-firebase-adminsdk-8u6av-886cee7b42.json')
+cred = credentials.Certificate(cred_path)
+initialize_app(cred)
 
 
 
