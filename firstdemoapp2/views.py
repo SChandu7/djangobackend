@@ -19,7 +19,7 @@ import boto3
 from django.conf import settings
 from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
 from firebase_admin import messaging
-
+from firstapp2.firebase_config import *  # This will initialize Firebase Admin SDK
 
 
 @csrf_exempt
