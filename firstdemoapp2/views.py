@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.conf import settings
 import boto3
+import os
 import firebase_admin
 from firebase_admin import credentials
 from django.shortcuts import render, redirect
