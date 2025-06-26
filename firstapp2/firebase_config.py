@@ -5,8 +5,8 @@ from firebase_admin import credentials
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-cred = credentials.Certificate("/home/ubuntu/djangobackend/firstapp2/serviceAccountKey.json")
+cred = credentials.Certificate(os.path.join(BASE_DIR, 'firstapp2', 'serviceAccountKey.json'))
+firebase_admin.initialize_app(cred)
 
-# Initialize only once
-if not firebase_admin._apps:
-    firebase_admin.initialize_app(cred)
+
+
