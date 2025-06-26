@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import pymysql
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("/home/ubuntu/djangobackend/firstapp2/serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
