@@ -23,10 +23,7 @@ from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
 from firebase_admin import messaging
 from firstapp2.firebase_config import *  # This will initialize Firebase Admin SDK
 
-if not firebase_admin._apps:
-    cred = credentials.Certificate("/home/ubuntu/djangobackend/firstapp2/serviceAccountKey.json")
 
-    firebase_admin.initialize_app(cred)
 
 
 @csrf_exempt
