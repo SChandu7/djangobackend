@@ -21,7 +21,7 @@ from rest_framework import status
 import boto3
 from django.conf import settings
 from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
-from firebase_admin import messaging
+from firebase_admin import credentials, initialize_app,messaging
   # This will initialize Firebase Admin SDk
 
 
