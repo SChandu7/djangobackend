@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.conf import settings
 import boto3
+import firebase_admin
+from firebase_admin import credentials
 from django.shortcuts import render, redirect
 from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
 from django.contrib import messages
@@ -20,6 +22,10 @@ from django.conf import settings
 from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
 from firebase_admin import messaging
 from firstapp2.firebase_config import *  # This will initialize Firebase Admin SDK
+
+if not firebase_admin._apps:
+    cred = credentials.Certificate("path/to/serviceAccountKey.json")
+    firebase_admin.initialize_app(cred)
 
 
 @csrf_exempt
