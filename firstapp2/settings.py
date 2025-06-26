@@ -15,8 +15,7 @@ import pymysql
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate("/home/ubuntu/djangobackend/firstapp2/serviceAccountKey.json")
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(credentials.ApplicationDefault())
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
