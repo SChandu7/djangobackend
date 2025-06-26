@@ -26,7 +26,7 @@ from firebase_admin import credentials, initialize_app,messaging
   # This will initialize Firebase Admin SDk
 
 
-cred_path = os.path.join(BASE_DIR, 'firstdemoapp2', 'sportsforchangeproject-firebase-adminsdk-8u6av-c929095979.json')
+cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/sportsforchangeproject-firebase-adminsdk-8u6av-c929095979.json')
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
