@@ -22,7 +22,11 @@ from django.conf import settings
 from django.db.models import Q  # ✅ THIS FIXES YOUR ERROR
 from firebase_admin import messaging
   # This will initialize Firebase Admin SDk
-from firstapp2.firebase_config import *
+
+
+
+cred = credentials.Certificate(os.path.join(/home/ubuntu/djangobackend/firstdemoapp2/sportsforchangeproject-firebase-adminsdk-8u6av-886cee7b42.json'))
+firebase_admin.initialize_app(cred)
 
 
 
