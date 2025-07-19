@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken,FarmerData
 
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,5 +34,13 @@ class SportsNotificationTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = SportsNotificationToken
         fields = ['username', 'device_token']
+
+
+
+class FarmerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Farmer
+        fields = '__all__'
+
 
 
