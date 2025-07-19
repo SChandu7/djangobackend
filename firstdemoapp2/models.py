@@ -109,4 +109,44 @@ class SportsNotificationToken(models.Model):
         return f"{self.username} - {self.device_token}"
 
 
+from django.db import models
+
+class FarmerData(models.Model):
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    total_acres = models.CharField(max_length=20)
+    type_crop = models.CharField(max_length=50)
+
+    has_equipment = models.BooleanField(default=False)
+    equipment_name = models.CharField(max_length=100, blank=True)
+    equipment_desc = models.TextField(blank=True)
+    equipment_image = models.ImageField(upload_to='equipment/', blank=True, null=True)
+
+    has_crops = models.BooleanField(default=False)
+    crop_name = models.CharField(max_length=100, blank=True)
+    crop_type = models.CharField(max_length=50, blank=True)
+    crop_qty = models.CharField(max_length=20, blank=True)
+
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=50, blank=True)
+    latitude = models.CharField(max_length=50, blank=True)
+    longitude = models.CharField(max_length=50, blank=True)
+
+    role = models.CharField(max_length=20, blank=True)
+    pricing_hour = models.CharField(max_length=20, blank=True)
+    pricing_day = models.CharField(max_length=20, blank=True)
+    pricing_week = models.CharField(max_length=20, blank=True)
+    pricing_month = models.CharField(max_length=20, blank=True)
+    pricing_acre = models.CharField(max_length=20, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    language = models.CharField(max_length=50, blank=True)
+
+    password = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.full_name
+
+
+
 
