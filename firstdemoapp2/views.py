@@ -7,12 +7,12 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from django.shortcuts import render, redirect
-from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken,FarmerData
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
+from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer,FarmerDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -566,6 +566,21 @@ class SendSportsActivityNotificationToAll(APIView):
             "sent": response.success_count,
             "failed": response.failure_count,
         }, status=200)
+
+
+from rest_framework.parsers import MultiPartParser, FormParser
+
+
+class FarmerRegistrationView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, format=None):
+        serializer = FarmerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Farmer registered successfully"}, status=200)
+        return Response(serializer.errors, status=400)
+
 
 
 
