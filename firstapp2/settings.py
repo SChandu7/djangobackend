@@ -103,10 +103,10 @@ WSGI_APPLICATION = 'firstapp2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'awsdb',
+        'NAME': 'awsdb3',
         'USER': 'kingchandus',
         'PASSWORD': 'kingchandus',
-        'HOST': 'awsdb.cb802oouacac.ap-south-1.rds.amazonaws.com',
+        'HOST': 'awsdb3.cb802oouacac.ap-south-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }

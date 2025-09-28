@@ -1,1 +1,16 @@
-h
+{
+  "type": "service_account",
+  "project_id": "sportsforchangeproject",
+  "private_key_id": "e01fb72ca8642df5e25f386c6e8fecdda459f161",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCofTz6THFy2IHT\nD6OQJebNFrAsmxbw/RleQDN7PUTU4zpCEjUpKWVTJCwp76wCDqf4zYqFsFvyzx57\n+cbbzEsmC2b9rNAbaNgZFxoWutuVU4s1xbaNC+a3ELZnkrkjyl2M/tAV7LO6WVKo\nY5KS3tkmqn/KFOhVCMpobwjMNxcA6/f5qy+nZE+SnDnDFlqdcYb/oJF4Yy/5jfnN\nwecTDm96B28XCJbsIUPpvc554A1WjcxCQdceuWW3zE9mC92mgQ5x0INjVJcelvW6\nNUnFunCByqtzEaJX/SeTHafBpI+qdDbJP7sfzfyVPQobV00p6nev9QR26BIG+qQP\nOz3G3YVdAgMBAAECggEACIPLwRp74UHvzarMqUxBDbxHyvlLf4JK9ehosaG3CMsy\n9oPVC+97n2gEk1n5Z2E2O+ynQ3pWKz8sWzeURSdd5N5OpiNFoRz7TslMGDn5PuKp\n9l23jAk976J4lWNk19oyQB3ghjsgGhrJgpkFn0aD0uBq9Nt5olJ/aCe0Wh2um+07\n2tphisxUw2l1j8MWwL26uwh4DCO1T0jMQSzz0SgVJYSMXU80EDOr8NLPNWS1AwxH\nULUZlWxaUqGg8zAvDF/rvyYIE1o42JNOpzCztQzJH0aurH+OPmA09IKXhvCfmj6M\nyv4DTXEGscS30xbNnNZx046usM+5VA1HyBZ6jJguAQKBgQDhg0F4LvhyHGGuSDy5\nM9T2L2XW+X1rvR/Kz3HvR67QbrXHEh3XJr4206/AjvfubNWseYU9LUqwbzmUzFiQ\nt5ypvLFV0rC6OF3jmwdxFky1pAfN9xORqstCZFMVecZha0yCN1oX57aDOlNLVAm7\nL2SxMf8Birs1WTOj25JXwTabFQKBgQC/RHZcyjV7x/1AkHE+LeceW7sb1whIVU+c\nSkbsz2aN6mo+wT2AvpsAXx4hEi3PKe29FHQTkIKD5LZRG3fD7H+XfBhvn02WMLkh\nYz+OCau0/LG1qeNDiq/IX60yUSGxvDTD6N5ZXhhkHW6Rp0EmGl0RKJacUHjBLeKH\n01SZG7OzKQKBgG5jIZkC5Pp2ihoVoiPGC2i2qtMgLRSf7wAHq23FWP0ONEzNwW2f\nuVx9InrPgO1kuPNESMQ5d2YGC9mabX/pYPZ1NxkbmQaOsObI7Eue7s27DVb0qs+T\nGwvUsBbDFSh6rWjQT3mEIwL5eexVpq3J9TAHmRvYHOtwTqbWxDvQiDpBAoGBALGH\nvE04KxhvcnOhHltWg/U7s5qNptRsyu4IS3i2sTv8Xw1Mk+eSA5D+uJp9oyNsiYw9\nFdirA1mkykzSMAIc2/khaBUDSiKjqtKAqpcOBuCAw/oYbCde7PYRSFMx1xJ/3IIS\n/X75xa33W4+6LNBPHB83C0SftNWp31+vGhDbE5qxAoGBAKudq+5kt6rtb90YM9JE\nVEP1a6j4hK8H9fmB+HsvrYKlA5vKQJVbXPAYfuQZ0zrga5HF8ZPRpSsAP5wqCplm\nO78ANdUAO/cRqlQ8y5WqqBrfRIlAzXjXltIHJcuPKWVSPimNHWPz4cIuPIRp5Wm2\naM6szT9UAdV4HA0CXkNdjFgQ\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-8u6av@sportsforchangeproject.iam.gserviceaccount.com",
+  "client_id": "105967990997328571709",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-8u6av%40sportsforchangeproject.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+
+
+

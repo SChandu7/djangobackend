@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime
@@ -7,12 +8,12 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from django.shortcuts import render, redirect
-from .models import kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import Patient,kisandata, MyUser,Farmer, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
+from .serializers import FarmerSerializer,UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,14 +27,64 @@ from firebase_admin import credentials, initialize_app,messaging
   # This will initialize Firebase Admin SDk
 
 
-cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/sportsforchangeproject-firebase-adminsdk-8u6av-c929095979.json')
+cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/serviceKey.json')
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
 
 
 
+@csrf_exempt
+def upload_patient_data(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
 
+            patient = Patient.objects.create(
+                name=data.get("name"),
+                age=data.get("age"),
+                gender=data.get("gender"),
+                weight=data.get("weight"),
+                heart_rate=data.get("heart_rate"),
+                blood_pressure=data.get("blood_pressure"),
+                steps=data.get("steps"),
+                sleep_hours=data.get("sleep_hours"),
+                medicine_name=data.get("medicine_reminder", {}).get("name"),
+                medicine_time=data.get("medicine_reminder", {}).get("time"),
+                medicine_status=data.get("medicine_reminder", {}).get("status", "Pending"),
+                appointments=data.get("appointments", [])
+            )
+
+            return JsonResponse({"status": "success", "id": patient.id}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
+
+
+def get_patient_data(request, patient_id):
+    try:
+        patient = Patient.objects.get(id=patient_id)
+        data = {
+            "name": patient.name,
+            "age": patient.age,
+            "gender": patient.gender,
+            "weight": patient.weight,
+            "heart_rate": patient.heart_rate,
+            "blood_pressure": patient.blood_pressure,
+            "steps": patient.steps,
+            "sleep_hours": patient.sleep_hours,
+            "appointments": patient.appointments,
+            "medicine_reminder": {
+                "name": patient.medicine_name,
+                "time": patient.medicine_time,
+                "status": patient.medicine_status,
+            }
+        }
+        return JsonResponse(data, safe=False)
+    except Patient.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Patient not found"}, status=404)
 
 
 
@@ -220,15 +271,16 @@ def assignments_login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = assignmentsuserdata.objects.filter(username=username,
+        userr = assignmentsuserdata.objects.filter(username=username,
                                                   password=password).first()
 
-        if user:
-            if user.approval:  # Check if approval is True
+        if userr:
+            if userr.approval:  # Check if approval is True
                 return JsonResponse(
                     {
                         'status': 'success',
-                        'message': 'Login successful'
+                        'message': 'Login successful',
+                        'role':userr.user,
                     },
                     status=200)
             else:
@@ -552,21 +604,42 @@ class SendSportsActivityNotificationToAll(APIView):
         if not tokens:
             return Response({"message": "No tokens to send."}, status=200)
 
-        message = messaging.MulticastMessage(
-            notification=messaging.Notification(
-                title=title,
-                body=body,
-            ),
-            tokens=tokens,
-        )
+        success = 0
+        failure = 0
 
-        response = messaging.send_multicast(message)
+        for token in tokens:
+            try:
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title=title,
+                        body=body,
+                    ),
+                    token=token,
+                )
+                response = messaging.send(message)
+                print(f"✅ Sent to {token}: {response}")
+                success += 1
+            except Exception as e:
+                print(f"❌ Failed for {token}: {e}")
+                failure += 1
 
         return Response({
-            "sent": response.success_count,
-            "failed": response.failure_count,
+            "sent": success,
+            "failed": failure,
+            "total": len(tokens)
         }, status=200)
 
 
+@api_view(['GET', 'POST'])
+def kisan_register(request):
+    if request.method == 'POST':
+        serializer = FarmerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Farmer registered successfully!'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+    elif request.method == 'GET':
+        farmers = Farmer.objects.all()
+        serializer = FarmerSerializer(farmers, many=True)
+        return Response(serializer.data)

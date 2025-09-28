@@ -1,5 +1,23 @@
 from django.db import models
 
+class Patient(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=10)
+    weight = models.CharField(max_length=20)
+    heart_rate = models.CharField(max_length=10)
+    blood_pressure = models.CharField(max_length=20)
+    steps = models.IntegerField()
+    sleep_hours = models.FloatField()
+    medicine_name = models.CharField(max_length=100)
+    medicine_time = models.CharField(max_length=50)
+    medicine_status = models.CharField(max_length=20, default="Pending")
+
+    # store appointments as JSON (list of dicts)
+    appointments = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.name
 
 class MyUser(models.Model):
     username = models.CharField(max_length=100, unique=True)
@@ -17,7 +35,7 @@ class assignmentsuserdata(models.Model):
     feild_key = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    approval = models.BooleanField(default=False)
+    approval = models.BooleanField(default=True)
 
 
 class todouser(models.Model):
@@ -110,3 +128,34 @@ class SportsNotificationToken(models.Model):
 
 
 
+from django.db import models
+
+class Farmer(models.Model):
+    user_type = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=15)
+    password = models.CharField(max_length=128)  # Optionally use hashed password
+    no_of_acres = models.CharField(max_length=50)
+    crop_type = models.CharField(max_length=100)
+    has_equipment = models.BooleanField(default=False)
+    equipment_name = models.CharField(max_length=100, blank=True, null=True)
+    equipment_description = models.TextField(blank=True, null=True)
+    pricing_per_hour = models.CharField(max_length=50, blank=True, null=True)
+    pricing_per_day = models.CharField(max_length=50, blank=True, null=True)
+    pricing_per_week = models.CharField(max_length=50, blank=True, null=True)
+    pricing_per_month = models.CharField(max_length=50, blank=True, null=True)
+    pricing_per_acre = models.CharField(max_length=50, blank=True, null=True)
+    language = models.CharField(max_length=50)
+    has_crops = models.BooleanField(default=False)
+    crop_name = models.CharField(max_length=100, blank=True, null=True)
+    crop_type_detail = models.CharField(max_length=100, blank=True, null=True)
+    crop_quantity = models.CharField(max_length=50, blank=True, null=True)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    latitude = models.CharField(max_length=50)
+    longitude = models.CharField(max_length=50)
+    equipment_image = models.CharField(max_length=255, blank=True, null=True)  # For uploaded S3 file path
+
+    def __str__(self):
+        return self.full_name
