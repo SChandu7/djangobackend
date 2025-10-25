@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Farmer,todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import SensorData,Farmer,todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+
+
+class SensorDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SensorData
+        fields = '__all__'
 
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:

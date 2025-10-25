@@ -1,5 +1,18 @@
-from django.db import models
 
+
+from django.db import models
+from django.utils import timezone
+
+class SensorData(models.Model):
+    device = models.CharField(max_length=100)
+    soil_moisture_level = models.CharField(max_length=50)
+    soil_value = models.IntegerField()
+    turbidity_level = models.CharField(max_length=50)
+    turbidity_value = models.IntegerField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.device} - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     age = models.IntegerField()

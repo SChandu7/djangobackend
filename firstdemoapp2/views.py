@@ -8,12 +8,12 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from django.shortcuts import render, redirect
-from .models import Patient,kisandata, MyUser,Farmer, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import Patient,kisandata, MyUser,Farmer, todouser,SensorData, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import FarmerSerializer,UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
+from .serializers import FarmerSerializer,UserDataSerializer, DisplayDataSerializer, SensorDataSerializer,ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -31,6 +31,34 @@ cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/serviceKey.js
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
+
+
+
+
+
+
+
+
+@api_view(['GET', 'POST'])
+def sensor_data_view(request):
+    if request.method == 'GET':
+        data = SensorData.objects.all().order_by('-timestamp')
+        serializer = SensorDataSerializer(data, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = SensorDataSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Data received successfully ✅"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
 
 
 

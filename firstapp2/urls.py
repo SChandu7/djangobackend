@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path
 from .views import home, demo, demo2, nothing, yash, navya
-from firstdemoapp2.views import get_patient_data,upload_patient_data,kisan_register,SendSportsActivityNotificationToAll,signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login,postSportsDailyActivityView,getSportsDailyActivityView,postSportsNotificationTokenView,getSportsNotificationTokenView
+from firstdemoapp2.views import sensor_data_view, get_patient_data,upload_patient_data,kisan_register,SendSportsActivityNotificationToAll,signup_view, login_view, home2, send, get_user_data, get_assignments, get_display, send_arduino, receive_arduino, upload_file_to_s3, receive_files_from_s3, assignments_signup_view, assignments_login_view, GetAllUsers, UpdateUserApproval, dbn_place_order, dbn_get_order, kisan_register, kisan_login,postSportsDailyActivityView,getSportsDailyActivityView,postSportsNotificationTokenView,getSportsNotificationTokenView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,5 +43,6 @@ urlpatterns = [
     path('sendnotificationtoall/', SendSportsActivityNotificationToAll.as_view()),
     path('farmerregister/', kisan_register, name='kisan_register'),
     path('uploadpatientdata/',upload_patient_data,name='upload_patient_data'),
+    path('devathonsensordata/', sensor_data_view),
     path('getpatientdata/',get_patient_data,name='get_patient_data'),
 ]
