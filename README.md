@@ -158,8 +158,8 @@ urlpatterns = [
 ## 1️⃣ Clone Repository
 bash
 ```
-git clone https://github.com/<your-username>/sports-backend.git
-cd sports-backend
+git clone https://github.com/SChandu7/djangobackend.git
+cd djangobackend
 ```
 ## 2️⃣ Create Virtual Environment
 bash
@@ -224,8 +224,8 @@ sudo apt install python3-pip python3-venv nginx mysql-server
 - Step 4: Clone Project
 bash
 ```
-git clone https://github.com/<your-username>/sports-backend.git
-cd sports-backend
+git clone https://github.com/SChandu7/djangobackend.git
+cd djangbackend
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
@@ -233,7 +233,7 @@ pip install -r requirements.txt
 - Step 5: Setup Gunicorn & Nginx
 bash
 ```
-gunicorn --bind 0.0.0.0:8000 backend.wsgi:application
+gunicorn --bind 0.0.0.0:8000 djangobackend.wsgi:application
 sudo systemctl start nginx
 ```
 - Step 6: Configure Nginx Proxy
@@ -329,6 +329,7 @@ Host: AWS EC2
 
 Frontend Integration: Almost 20+ Applications
 
-🏆 License
+---
+## 🏆 License
 This project is licensed under the MIT License.
 You’re free to use, modify, and distribute for academic and research purposes.
