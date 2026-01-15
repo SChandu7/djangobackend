@@ -564,32 +564,58 @@ def kisan_login(request):
 
 
 class postSportsDailyActivityView(APIView):
+
     def post(self, request, format=None):
-        # Create the Activity
         serializer = SportsDailyActivitySerializer(data=request.data)
+
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         activity = serializer.save()
 
-        # Upload images to AWS S3
-        s3 = boto3.client('s3',
-                          region_name='ap-south-1',
-                          aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                          aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        # ✅ FIX 1: getlist() is REQUIRED
+        images = request.FILES.getlist('images')
+
+        if not images:
+            return Response(
+                {"error": "No images received"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        s3 = boto3.client(
+            's3',
+            region_name=settings.AWS_S3_REGION_NAME,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
 
         folder_name = "sportsactivityimages"
 
-        for key in request.FILES:
-            file_obj = request.FILES[key]
-            filename = f"{folder_name}/{activity.activity_type}_{file_obj.name}"  # save to subfolder
-            s3.upload_fileobj(file_obj, settings.AWS_STORAGE_BUCKET_NAME, filename)
+        for image in images:
+            filename = f"{folder_name}/{activity.id}_{image.name}"
 
-            file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-south-1.amazonaws.com/{filename}"
+            s3.upload_fileobj(
+                image,
+                settings.AWS_STORAGE_BUCKET_NAME,
+                filename,
+                ExtraArgs={"ContentType": image.content_type}
+            )
 
-            SportsDailyActivityImages.objects.create(activity=activity, image_url=file_url)
+            file_url = (
+                f"https://{settings.AWS_STORAGE_BUCKET_NAME}"
+                f".s3.{settings.AWS_S3_REGION_NAME}.amazonaws.com/{filename}"
+            )
 
-        return Response(SportsDailyActivitySerializer(activity).data, status=status.HTTP_201_CREATED)
+            SportsDailyActivityImages.objects.create(
+                activity=activity,
+                image_url=file_url
+            )
+
+        return Response(
+            SportsDailyActivitySerializer(activity).data,
+            status=status.HTTP_201_CREATED
+        )
+
 
 
 
@@ -661,6 +687,7 @@ class FarmerRegistrationView(APIView):
             serializer.save()
             return Response({"message": "Farmer registered successfully"}, status=200)
         return Response(serializer.errors, status=400)
+
 
 
 
