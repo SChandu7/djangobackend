@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime
@@ -8,12 +7,12 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from django.shortcuts import render, redirect
-from .models import Patient,kisandata, MyUser,Farmer, todouser,SensorData, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import Song,kisandata, MyUser, todouser, daysandassignments, arduinodata, assignmentsuserdata, dbnOrder, dbnOrderItem,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import FarmerSerializer,UserDataSerializer, DisplayDataSerializer, SensorDataSerializer,ArduinoDataSerializer,SportsDailyActivitySerializer,SportsDailyActivityImageSerializer,SportsNotificationTokenSerializer
+from .serializers import SongSerializer,UserDataSerializer, DisplayDataSerializer, ArduinoDataSerializer,SportsDailyActivitySerializer,SportsNotificationTokenSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -27,92 +26,95 @@ from firebase_admin import credentials, initialize_app,messaging
   # This will initialize Firebase Admin SDk
 
 
-cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/serviceKey.json')
+cred_path = os.path.join('/home/ubuntu/djangobackend/firstdemoapp2/sportsforchangeproject-firebase-adminsdk-8u6av-c929095979.json')
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
 
 
 
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    region_name=settings.AWS_S3_REGION_NAME,
+)
+
+BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
 
 
+# ======================================
+# GET /songs/  → LIST SONGS
+# ======================================
+@api_view(['GET'])
+def list_songs(request):
+    songs = Song.objects.all().order_by('-id')
+    serializer = SongSerializer(songs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# ======================================
+# POST /songs/upload/ → UPLOAD SONG
+# ======================================
+@api_view(['POST'])
+def upload_song(request):
+    file = request.FILES.get('file')
 
-@api_view(['GET', 'POST'])
-def sensor_data_view(request):
-    if request.method == 'GET':
-        data = SensorData.objects.all().order_by('-timestamp')
-        serializer = SensorDataSerializer(data, many=True)
-        return Response(serializer.data)
+    if not file:
+        return Response(
+            {"error": "No file provided"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    elif request.method == 'POST':
-        serializer = SensorDataSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Data received successfully ✅"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    file_name = file.name
+    s3_key = f"angruvfarmradiosongs/{file_name}"
 
-
-
-
-
-
-
-
-
-
-@csrf_exempt
-def upload_patient_data(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body.decode('utf-8'))
-
-            patient = Patient.objects.create(
-                name=data.get("name"),
-                age=data.get("age"),
-                gender=data.get("gender"),
-                weight=data.get("weight"),
-                heart_rate=data.get("heart_rate"),
-                blood_pressure=data.get("blood_pressure"),
-                steps=data.get("steps"),
-                sleep_hours=data.get("sleep_hours"),
-                medicine_name=data.get("medicine_reminder", {}).get("name"),
-                medicine_time=data.get("medicine_reminder", {}).get("time"),
-                medicine_status=data.get("medicine_reminder", {}).get("status", "Pending"),
-                appointments=data.get("appointments", [])
-            )
-
-            return JsonResponse({"status": "success", "id": patient.id}, status=201)
-
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=400)
-
-    return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
-
-
-def get_patient_data(request, patient_id):
     try:
-        patient = Patient.objects.get(id=patient_id)
-        data = {
-            "name": patient.name,
-            "age": patient.age,
-            "gender": patient.gender,
-            "weight": patient.weight,
-            "heart_rate": patient.heart_rate,
-            "blood_pressure": patient.blood_pressure,
-            "steps": patient.steps,
-            "sleep_hours": patient.sleep_hours,
-            "appointments": patient.appointments,
-            "medicine_reminder": {
-                "name": patient.medicine_name,
-                "time": patient.medicine_time,
-                "status": patient.medicine_status,
-            }
-        }
-        return JsonResponse(data, safe=False)
-    except Patient.DoesNotExist:
-        return JsonResponse({"status": "error", "message": "Patient not found"}, status=404)
+        # Upload to S3
+        s3.upload_fileobj(
+            file,
+            BUCKET_NAME,
+            s3_key,
+            ExtraArgs={"ContentType": file.content_type},
+        )
+
+        # Public URL
+        file_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
+
+        # Save only metadata in DB
+        song = Song.objects.create(
+            title=os.path.splitext(file_name)[0],  # remove .mp3
+            file_url=file_url,
+        )
+
+        serializer = SongSerializer(song)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+# ======================================
+# DELETE /songs/<id>/ → DELETE FROM DB ONLY
+# ======================================
+@api_view(['DELETE'])
+def delete_song(request, id):
+    try:
+        song = Song.objects.get(id=id)
+        song.delete()  # ❗ NO S3 DELETE (as you requested)
+        return Response(
+            {"message": "Song removed from database"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+    except Song.DoesNotExist:
+        return Response(
+            {"error": "Song not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
 
 
@@ -299,16 +301,15 @@ def assignments_login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        userr = assignmentsuserdata.objects.filter(username=username,
+        user = assignmentsuserdata.objects.filter(username=username,
                                                   password=password).first()
 
-        if userr:
-            if userr.approval:  # Check if approval is True
+        if user:
+            if user.approval:  # Check if approval is True
                 return JsonResponse(
                     {
                         'status': 'success',
-                        'message': 'Login successful',
-                        'role':userr.user,
+                        'message': 'Login successful'
                     },
                     status=200)
             else:
@@ -632,42 +633,36 @@ class SendSportsActivityNotificationToAll(APIView):
         if not tokens:
             return Response({"message": "No tokens to send."}, status=200)
 
-        success = 0
-        failure = 0
+        message = messaging.MulticastMessage(
+            notification=messaging.Notification(
+                title=title,
+                body=body,
+            ),
+            tokens=tokens,
+        )
 
-        for token in tokens:
-            try:
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=title,
-                        body=body,
-                    ),
-                    token=token,
-                )
-                response = messaging.send(message)
-                print(f"✅ Sent to {token}: {response}")
-                success += 1
-            except Exception as e:
-                print(f"❌ Failed for {token}: {e}")
-                failure += 1
+        response = messaging.send_multicast(message)
 
         return Response({
-            "sent": success,
-            "failed": failure,
-            "total": len(tokens)
+            "sent": response.success_count,
+            "failed": response.failure_count,
         }, status=200)
 
 
-@api_view(['GET', 'POST'])
-def kisan_register(request):
-    if request.method == 'POST':
+from rest_framework.parsers import MultiPartParser, FormParser
+
+
+class FarmerRegistrationView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, format=None):
         serializer = FarmerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Farmer registered successfully!'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Farmer registered successfully"}, status=200)
+        return Response(serializer.errors, status=400)
 
-    elif request.method == 'GET':
-        farmers = Farmer.objects.all()
-        serializer = FarmerSerializer(farmers, many=True)
-        return Response(serializer.data)
+
+
+
+

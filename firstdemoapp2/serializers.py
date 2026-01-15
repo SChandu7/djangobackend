@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import SensorData,Farmer,todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+from .models import Song,SensorData,Farmer,todouser,daysandassignments,arduinodata,SportsDailyActivity,SportsDailyActivityImages,SportsNotificationToken
+
+
+class SongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = '__all__'
+
 
 
 class SensorDataSerializer(serializers.ModelSerializer):
@@ -22,6 +29,7 @@ class ArduinoDataSerializer(serializers.ModelSerializer):
         fields = ['time', 'result']
 
 
+
 class SportsDailyActivityImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SportsDailyActivityImages
@@ -29,11 +37,14 @@ class SportsDailyActivityImageSerializer(serializers.ModelSerializer):
 
 
 class SportsDailyActivitySerializer(serializers.ModelSerializer):
-    images = SportsDailyActivityImageSerializer(many=True, read_only=True)
 
+    images = SportsDailyActivityImageSerializer(many=True, read_only=True)
     class Meta:
         model = SportsDailyActivity
-        fields = ['id', 'school', 'date', 'time', 'pt_name', 'activity_type', 'game_name', 'images']
+        fields = ['id', 'school', 'date', 'time', 'pt_name', 'activity_type', 'game_name' , 'images']
+
+
+
 
 
 class SportsNotificationTokenSerializer(serializers.ModelSerializer):

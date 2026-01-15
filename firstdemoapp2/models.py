@@ -13,6 +13,21 @@ class SensorData(models.Model):
 
     def __str__(self):
         return f"{self.device} - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+class Song(models.Model):
+    title = models.CharField(max_length=255)
+    file_url = models.URLField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+
+
+
+
+
+
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     age = models.IntegerField()
